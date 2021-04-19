@@ -1,3 +1,4 @@
+import 'package:feed/page/zhihu/zhihu_page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,6 +13,7 @@ class _HomePageState extends State<HomePage> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
+
           title: Text('Feed'),
           bottom: TabBar(
             tabs: [
@@ -23,7 +25,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: TabBarView(
           children: [
-            Container(),
+            ZhiHuPage(),
             Container(),
             Container(),
           ],
