@@ -8,6 +8,7 @@ import 'package:feed/page/web/web_page.dart';
 import 'package:feed/page/zhihu/bean/zhihu_entity.dart';
 import 'package:feed/page/zhihu/bean/zhihu_hot_item_bean.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 import 'package:kt_dart/collection.dart';
 
@@ -18,6 +19,8 @@ class ZhiHuPage extends StatefulWidget {
 
 class _ZhiHuPageState extends State<ZhiHuPage> with AutomaticKeepAliveClientMixin {
   var items = mutableListOf<ZhiHuHotItemBean>();
+
+  final ChromeSafariBrowser browser = ChromeSafariBrowser();
 
   @override
   void initState() {
@@ -63,7 +66,14 @@ class _ZhiHuPageState extends State<ZhiHuPage> with AutomaticKeepAliveClientMixi
           var item = items[index];
           return GestureDetector(
             onTap: () {
-              Get.to(WebPage(),arguments: item.link);
+              browser.open(
+                url: Uri.parse(item.link),
+                options: ChromeSafariBrowserClassOptions(
+                  android: AndroidChromeCustomTabsOptions(addDefaultShareMenuItem: false),
+                  ios: IOSSafariOptions(barCollapsingEnabled: true),
+                ),
+              );
+              // Get.to(WebPage(), arguments: item.link);
             },
             child: Container(
               padding: EdgeInsets.all(8).copyWith(left: 16),
