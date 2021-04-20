@@ -4,9 +4,11 @@ import 'package:dartkt/dartkt.dart';
 import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:feed/generated/json/base/json_convert_content.dart';
+import 'package:feed/page/web/web_page.dart';
 import 'package:feed/page/zhihu/bean/zhihu_entity.dart';
 import 'package:feed/page/zhihu/bean/zhihu_hot_item_bean.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:kt_dart/collection.dart';
 
 class ZhiHuPage extends StatefulWidget {
@@ -14,7 +16,7 @@ class ZhiHuPage extends StatefulWidget {
   _ZhiHuPageState createState() => _ZhiHuPageState();
 }
 
-class _ZhiHuPageState extends State<ZhiHuPage> {
+class _ZhiHuPageState extends State<ZhiHuPage> with AutomaticKeepAliveClientMixin {
   var items = mutableListOf<ZhiHuHotItemBean>();
 
   @override
@@ -50,6 +52,7 @@ class _ZhiHuPageState extends State<ZhiHuPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       child: ListView.separated(
         separatorBuilder: (context, index) {
@@ -58,41 +61,61 @@ class _ZhiHuPageState extends State<ZhiHuPage> {
         itemCount: items.size,
         itemBuilder: (context, index) {
           var item = items[index];
-          return Container(
-            padding: EdgeInsets.all(8).copyWith(left: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(item.title, maxLines: 2, overflow: TextOverflow.ellipsis),
-                      SizedBox(height: 8),
-                      Text(
-                        item.metrics,
-                        maxLines: 1,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
+          return GestureDetector(
+            onTap: () {
+              Get.to(WebPage(),arguments: item.link);
+            },
+            child: Container(
+              padding: EdgeInsets.all(8).copyWith(left: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ],
+                        SizedBox(height: 8),
+                        Text(
+                          item.metrics,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(width: 8),
-                if(item.img?.isNotEmpty ?? false) ExtendedImage.network(
-                  item.img,
-                  height: 75,
-                  width: 100,
-                  fit: BoxFit.cover,
-                  borderRadius: BorderRadius.circular(6),
-                  shape: BoxShape.rectangle,
-                ),
-              ],
+                  SizedBox(width: 8),
+                  if (item.img?.isNotEmpty ?? false)
+                    ExtendedImage.network(
+                      item.img,
+                      height: 75,
+                      width: 100,
+                      fit: BoxFit.cover,
+                      enableLoadState: false,
+                      loadStateChanged: (state) {
+                        if (state.extendedImageLoadState == LoadState.loading) {
+                          return Container(color: Colors.grey.shade400);
+                        }
+                        return null;
+                      },
+                      borderRadius: BorderRadius.circular(6),
+                      shape: BoxShape.rectangle,
+                    ),
+                ],
+              ),
             ),
           );
         },
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

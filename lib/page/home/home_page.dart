@@ -1,3 +1,4 @@
+import 'package:feed/ext/ext.dart';
 import 'package:feed/page/zhihu/zhihu_page.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,7 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: Text('Feed'),
           bottom: TabBar(
+
             tabs: [
               Tab(text: '知乎'),
               Tab(text: '微博'),
