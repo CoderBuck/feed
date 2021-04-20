@@ -1,8 +1,8 @@
-
 import 'dart:convert';
 
 import 'package:dartkt/dartkt.dart';
 import 'package:dio/dio.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:feed/generated/json/base/json_convert_content.dart';
 import 'package:feed/page/zhihu/bean/zhihu_entity.dart';
 import 'package:feed/page/zhihu/bean/zhihu_hot_item_bean.dart';
@@ -15,7 +15,6 @@ class ZhiHuPage extends StatefulWidget {
 }
 
 class _ZhiHuPageState extends State<ZhiHuPage> {
-
   var items = mutableListOf<ZhiHuHotItemBean>();
 
   @override
@@ -52,12 +51,45 @@ class _ZhiHuPageState extends State<ZhiHuPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: ListView.builder(
+      child: ListView.separated(
+        separatorBuilder: (context, index) {
+          return Container(height: 0.1, color: Colors.grey.shade600);
+        },
         itemCount: items.size,
         itemBuilder: (context, index) {
           var item = items[index];
-          return ListTile(
-            title: Text('${item.title}'),
+          return Container(
+            padding: EdgeInsets.all(8).copyWith(left: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.title, maxLines: 2, overflow: TextOverflow.ellipsis),
+                      SizedBox(height: 8),
+                      Text(
+                        item.metrics,
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 8),
+                if(item.img?.isNotEmpty ?? false) ExtendedImage.network(
+                  item.img,
+                  height: 75,
+                  width: 100,
+                  fit: BoxFit.cover,
+                  borderRadius: BorderRadius.circular(6),
+                  shape: BoxShape.rectangle,
+                ),
+              ],
+            ),
           );
         },
       ),
